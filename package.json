@@ -1,0 +1,96 @@
+{
+	"publisher": "craftslab",
+	"name": "codepop",
+	"version": "0.0.1",
+	"displayName": "codepop",
+	"description": "codepop",
+	"icon": "logo.png",
+  	"author": "Jia Jia",
+	"license": "Apache-2.0",
+	"homepage": "https://github.com/craftslab/codepop",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/craftslab/codepop"
+	},
+	"engines": {
+		"vscode": "^1.56.0",
+		"node": ">=12.0.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Snippets",
+		"Other"
+	],
+	"keywords": [
+		"javascript",
+		"python",
+		"typescript",
+		"php",
+		"autocomplete",
+		"ruby",
+		"java",
+		"go",
+		"golang",
+		"bash",
+		"kotlin",
+		"html",
+		"css",
+		"ocaml",
+		"perl",
+		"rust",
+		"julia",
+		"lua",
+		"haskell",
+		"c",
+		"cpp",
+		"c++",
+		"csharp",
+		"c#",
+		"react",
+		"swift",
+		"objective-c",
+		"objectivec",
+		"ai",
+		"method completion",
+		"intellicode",
+		"intellisense",
+		"snippets",
+		"kite"
+	],
+	"activationEvents": [
+		"onCommand:codepop.enable"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "codepop.enable",
+				"title": "codepop: enable"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "yarn run compile && yarn run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.4",
+		"@types/node": "14.x",
+		"@types/vscode": "^1.56.0",
+		"@typescript-eslint/eslint-plugin": "^4.14.1",
+		"@typescript-eslint/parser": "^4.14.1",
+		"eslint": "^7.19.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.2.1",
+		"typescript": "^4.1.3",
+		"vscode-test": "^1.5.0"
+	},
+	"dependencies": {
+		"vsce": "^1.92.0"
+	}
+}
