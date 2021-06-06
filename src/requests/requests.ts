@@ -37,7 +37,6 @@ export type CompleteResult = {
     oldPrefix: string;
     results: Result[];
     userMessage: string[];
-    isLocked: boolean;
 };
 
 export default class Requests {
@@ -55,24 +54,10 @@ export default class Requests {
         return Promise.resolve(null);
     }
 
-    public complete(
+    public result(
         data: CompleteParams
     ): Promise<CompleteResult | undefined | null> {
-        return this.runtime.request<CompleteResult | undefined | null>({
-            complete: data
-        });
-    }
-
-    public config(body: {
-        quiet?: boolean;
-        source: CompleteState;
-    }): Promise<{ message: string } | null | undefined> {
-        return this.runtime.request(
-            {
-                config: body,
-            },
-            5000
-        );
+        return this.runtime.request<CompleteResult | undefined | null>({ complete: data });
     }
 
     public state(

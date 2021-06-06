@@ -10,18 +10,85 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Refer: tabnine-vscode/src/binary/Binary.ts
+import * as child_process from 'child_process';
+import { createInterface, ReadLine, ReadLineOptions } from "readline";
+import { Mutex } from 'await-semaphore';
+import { spawn } from "child_process";
+
+type UnkownWithToString = {
+    toString(): string;
+};
+
+type Service = {
+    proc: child_process.ChildProcess;
+    readLine: ReadLine;
+};
+
 export default class Runtime {
+    private mutex: Mutex = new Mutex();
+    private proc?: child_process.ChildProcess;
+
     public init(): Promise<void> {
-        // TODO
-        return Promise.resolve();
+        return this.startService();
     }
 
     public async request<T, R = unknown>(
         request: R,
         timeout = 1000
     ): Promise<T | null | undefined> {
+        const release = await this.mutex.acquire();
+        const result = await this.requestWithTimeout(request, timeout);
+        release();
+
+        return JSON.parse(result.toString()) as T | null;
+    }
+
+    private async startService() {
+        const { proc, readLine } = await Runtime.runService();
+        this.proc = proc;
+    }
+
+    private static async runService(): Promise<Service> {
+        const args: string[] = [ "--client=vscode" ];
+        const command = await Runtime.fetchBinary();
+
+        return Runtime.runProcess(command, args);
+    }
+
+    private static async fetchBinary(): Promise<string> {
         // TODO
-        return null;
+        return '';
+    }
+
+    private static runProcess(
+        command: string,
+        args?: ReadonlyArray<string>
+    ): Service {
+        const proc = spawn(command, args);
+        const input = proc.stdout;
+        const readLine = createInterface({
+            input,
+            output: proc.stdin,
+        } as ReadLineOptions);
+
+        return { proc, readLine };
+    }
+
+    private requestWithTimeout<T>(
+        request: T,
+        timeout: number
+    ): Promise<UnkownWithToString> {
+        return new Promise<UnkownWithToString>((resolve, reject) => {
+            setTimeout(() => {
+                reject(new Error("Request timeout"));
+            }, timeout);
+
+            this.proc?.stdin?.write(
+                `${JSON.stringify({
+                    request,
+                })}\n`,
+                "utf8"
+            );
+        });
     }
 }

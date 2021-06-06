@@ -10,6 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export const brandName = 'codepop';
+export const charLimit = 100_000;
+export const completeLabel = brandName;
+export const defaultDetail = brandName;
+export const maxNumResults = 5;
+
 export const triggerCharacters = [
     " ",
     ".",
