@@ -10,6 +10,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export const binaryHost = "http://localhost:8080";
+export const binaryUrl = `${binaryHost}/version`;
 export const brandName = 'codepop';
 export const charLimit = 100_000;
 export const completeLabel = brandName;

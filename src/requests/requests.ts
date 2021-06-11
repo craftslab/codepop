@@ -42,15 +42,14 @@ export type CompleteResult = {
 export default class Requests {
     private runtime = new Runtime();
 
-    public init(): Promise<void> {
-        return this.runtime.init();
+    public init(context: vscode.ExtensionContext): Promise<void> {
+        return this.runtime.init(context);
     }
 
     public deinit(): Promise<unknown> {
         if (this.runtime) {
             return this.runtime.request({ deinit: {} });
         }
-
         return Promise.resolve(null);
     }
 

@@ -11,24 +11,28 @@
 // limitations under the License.
 
 import * as child_process from 'child_process';
+import * as vscode from "vscode";
 import { createInterface, ReadLine, ReadLineOptions } from "readline";
 import { Mutex } from 'await-semaphore';
 import { spawn } from "child_process";
-
-type UnkownWithToString = {
-    toString(): string;
-};
+import Binary from '../binary/binary';
 
 type Service = {
     proc: child_process.ChildProcess;
     readLine: ReadLine;
 };
 
-export default class Runtime {
-    private mutex: Mutex = new Mutex();
-    private proc?: child_process.ChildProcess;
+type UnkownWithToString = {
+    toString(): string;
+};
 
-    public init(): Promise<void> {
+export default class Runtime {
+    private binary = new Binary();
+    private mutex = new Mutex();
+    private proc: child_process.ChildProcess | undefined;
+
+    public init(context: vscode.ExtensionContext): Promise<void> {
+        this.binary.init(context);
         return this.startService();
     }
 
@@ -44,20 +48,15 @@ export default class Runtime {
     }
 
     private async startService() {
-        const { proc, readLine } = await Runtime.runService();
+        const { proc, readLine } = await this.runService();
         this.proc = proc;
     }
 
-    private static async runService(): Promise<Service> {
+    private async runService(): Promise<Service> {
         const args: string[] = [ "--client=vscode" ];
-        const command = await Runtime.fetchBinary();
+        const cmd = await this.binary.fetch();
 
-        return Runtime.runProcess(command, args);
-    }
-
-    private static async fetchBinary(): Promise<string> {
-        // TODO
-        return '';
+        return Runtime.runProcess(cmd, args);
     }
 
     private static runProcess(
