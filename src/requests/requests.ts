@@ -56,7 +56,9 @@ export default class Requests {
     public result(
         data: CompleteParams
     ): Promise<CompleteResult | undefined | null> {
-        return this.runtime.request<CompleteResult | undefined | null>({ complete: data });
+        return this.runtime.request<CompleteResult | undefined | null>({
+            complete: data,
+        });
     }
 
     public state(

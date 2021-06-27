@@ -10,18 +10,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import * as extract from "extract-zip";
-import * as fs from "fs";
-import * as https from "https";
-import * as path from "path";
-import * as semver from "semver";
-import * as url from "url";
-import * as vscode from "vscode";
-import { ClientRequest, IncomingMessage } from "http";
-import { HttpsProxyAgent } from "https-proxy-agent";
-import { ProgressLocation, window } from "vscode";
-import { promises } from "fs";
-import { workspace } from "vscode";
+import * as extract from 'extract-zip';
+import * as fs from 'fs';
+import * as https from 'https';
+import * as path from 'path';
+import * as semver from 'semver';
+import * as url from 'url';
+import * as vscode from 'vscode';
+import { ClientRequest, IncomingMessage } from 'http';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { ProgressLocation, window } from 'vscode';
+import { promises } from 'fs';
+import { workspace } from 'vscode';
 import { binaryUrl, brandName } from '../proto/proto';
 
 const EXECUTABLE_FLAG = 0o755;
@@ -42,10 +42,10 @@ export default class Binary {
     private root: string | undefined;
 
     public init(context: vscode.ExtensionContext): Promise<void> {
-        this.root = path.join(context.globalStorageUri.fsPath, "binary");
+        this.root = path.join(context.globalStorageUri.fsPath, 'binary');
         try {
             // @ts-ignore
-            fs.mkdir(this.root, {recursive: true});
+            fs.mkdir(this.root, { recursive: true });
         } catch (err) {
             // PASS
         }
@@ -64,7 +64,7 @@ export default class Binary {
         try {
             const activePath = this.getActivePath();
             if (fs.existsSync(activePath)) {
-                const version = fs.readFileSync(activePath, "utf-8").trim();
+                const version = fs.readFileSync(activePath, 'utf-8').trim();
                 const versionPath = this.versionPath(version);
                 if (fs.existsSync(versionPath)) {
                     return versionPath;
@@ -78,45 +78,45 @@ export default class Binary {
 
     private getActivePath(): string {
         if (!this.root) {
-            throw new Error("Root not set");
+            throw new Error('Root not set');
         }
-        return path.join(this.root, "active");
+        return path.join(this.root, 'active');
     }
 
     private versionPath(version: string): string {
         if (!this.root) {
-            throw new Error("Root not set");
+            throw new Error('Root not set');
         }
-        return path.join(this.root, version, `${Binary.getArch()}-${Binary.getPlatform()}`);
+        return path.join(
+            this.root,
+            version,
+            `${Binary.getArch()}-${Binary.getPlatform()}`
+        );
     }
 
     private static getArch(): string {
-        if (process.platform === "darwin" && process.arch === "arm64") {
-            return "aarch64";
+        if (process.platform === 'darwin' && process.arch === 'arm64') {
+            return 'aarch64';
         }
-        if (process.arch === "x32" || process.arch === "ia32") {
-            return "i686";
+        if (process.arch === 'x32' || process.arch === 'ia32') {
+            return 'i686';
         }
-        if (process.arch === "x64") {
-            return "x86_64";
+        if (process.arch === 'x64') {
+            return 'x86_64';
         }
-        throw new Error(
-            `'${process.arch}' not supported`
-        );
+        throw new Error(`'${process.arch}' not supported`);
     }
 
     private static getPlatform(): string {
         switch (process.platform) {
-            case "win32":
+            case 'win32':
                 return `windows/'${brandName}'.exe`;
-            case "darwin":
+            case 'darwin':
                 return `darwin/'${brandName}'`;
-            case "linux":
+            case 'linux':
                 return `linux/'${brandName}'`;
             default:
-                throw new Error(
-                    `'${process.platform}' not supported`
-                );
+                throw new Error(`'${process.platform}' not supported`);
         }
     }
 
@@ -131,12 +131,8 @@ export default class Binary {
     }
 
     private async downloadAndExtract(): Promise<string> {
-        const {
-            filePath,
-            fileUrl,
-            fileDir,
-            execPath,
-        } = await this.getFilePaths();
+        const { filePath, fileUrl, fileDir, execPath } =
+            await this.getFilePaths();
         try {
             await this.downloadFile(fileUrl, filePath);
             await Binary.extractBundle(filePath, fileDir);
@@ -175,29 +171,26 @@ export default class Binary {
 
     private downloadData(urlStr: string): Promise<string> {
         return this.downloadResource(urlStr, (response, resolve, reject) => {
-            let downloadedData = "";
-            response.on("data", (data) => {
+            let downloadedData = '';
+            response.on('data', (data) => {
                 downloadedData += data;
             });
-            response.on("error", (error) => {
+            response.on('error', (error) => {
                 reject(error);
             });
-            response.on("end", () => {
+            response.on('end', () => {
                 resolve(downloadedData);
             });
         });
     }
 
-    private downloadFile(
-        url: string,
-        dest: string
-    ): Promise<void> {
+    private downloadFile(url: string, dest: string): Promise<void> {
         return this.downloadResource(url, (response, resolve, reject) => {
             const createdFile: fs.WriteStream = fs.createWriteStream(dest);
-            createdFile.on("finish", () => {
+            createdFile.on('finish', () => {
                 resolve();
             });
-            response.on("error", (error) => {
+            response.on('error', (error) => {
                 reject(error);
             });
             response.pipe(createdFile);
@@ -223,34 +216,54 @@ export default class Binary {
                     agent,
                     rejectUnauthorized,
                     // eslint-disable-next-line @typescript-eslint/naming-convention
-                    headers: { "User-Agent": "TabNine.tabnine-vscode" },
+                    headers: { 'User-Agent': 'TabNine.tabnine-vscode' },
                 },
                 (response) => {
-                    if (response.statusCode === 301 || response.statusCode === 302) {
+                    if (
+                        response.statusCode === 301 ||
+                        response.statusCode === 302
+                    ) {
                         let redirectUrl: string;
-                        if (typeof response.headers.location === "string") {
+                        if (typeof response.headers.location === 'string') {
                             redirectUrl = response.headers.location;
                         } else {
-                            if (!response.headers.location || response.headers.location) {
-                                return reject(new Error("Invalid download location received"));
+                            if (
+                                !response.headers.location ||
+                                response.headers.location
+                            ) {
+                                return reject(
+                                    new Error(
+                                        'Invalid download location received'
+                                    )
+                                );
                             }
-                            [redirectUrl] = response.headers.location as string[];
+                            [redirectUrl] = response.headers
+                                .location as string[];
                         }
-                        return resolve(this.downloadResource(redirectUrl, callback));
+                        return resolve(
+                            this.downloadResource(redirectUrl, callback)
+                        );
                     }
-                    if (response.statusCode !== 200 && response.statusCode !== 403) {
+                    if (
+                        response.statusCode !== 200 &&
+                        response.statusCode !== 403
+                    ) {
                         return reject(
-                            new Error(`Failed request statusCode ${response.statusCode || ""}`)
+                            new Error(
+                                `Failed request statusCode ${
+                                    response.statusCode || ''
+                                }`
+                            )
                         );
                     }
                     callback(response, resolve, reject);
-                    response.on("error", (error) => {
+                    response.on('error', (error) => {
                         reject(error);
                     });
                     return undefined;
                 }
             );
-            request.on("error", (error) => {
+            request.on('error', (error) => {
                 reject(error);
             });
             request.end();
@@ -263,12 +276,12 @@ export default class Binary {
             return { agent: undefined, rejectUnauthorized: false };
         }
         const proxyUrl = url.parse(proxySettings);
-        if (proxyUrl.protocol !== "https:" && proxyUrl.protocol !== "http:") {
+        if (proxyUrl.protocol !== 'https:' && proxyUrl.protocol !== 'http:') {
             return { agent: undefined, rejectUnauthorized: false };
         }
         const rejectUnauthorized = workspace
             .getConfiguration()
-            .get("http.proxyStrictSSL", true);
+            .get('http.proxyStrictSSL', true);
         const parsedPort: number | undefined = proxyUrl.port
             ? parseInt(proxyUrl.port, 10)
             : undefined;
@@ -288,7 +301,7 @@ export default class Binary {
     private static getProxySettings(): string | undefined {
         let proxy: string | undefined = workspace
             .getConfiguration()
-            .get<string>("http.proxy");
+            .get<string>('http.proxy');
         if (!proxy) {
             proxy =
                 process.env.HTTPS_PROXY ||
@@ -304,7 +317,7 @@ export default class Binary {
     ): string | number | undefined {
         return (
             (parsedUrl.port && Number(parsedUrl.port)) ||
-            (parsedUrl.protocol === "https:" ? 443 : 80)
+            (parsedUrl.protocol === 'https:' ? 443 : 80)
         );
     }
 
@@ -312,7 +325,7 @@ export default class Binary {
         path: string,
         dir: string
     ): Promise<void> {
-        return extract(path, { dir: dir});
+        return extract(path, { dir: dir });
     }
 
     private static async removeBundle(path: string) {
@@ -322,9 +335,7 @@ export default class Binary {
         } catch {}
     }
 
-    private async setExecutable(
-        dir: string
-    ): Promise<void[]> {
+    private async setExecutable(dir: string): Promise<void[]> {
         if (Binary.isWindows()) {
             return Promise.resolve([]);
         }
@@ -337,6 +348,6 @@ export default class Binary {
     }
 
     private static isWindows(): boolean {
-        return process.platform === "win32";
+        return process.platform === 'win32';
     }
 }

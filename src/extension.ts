@@ -14,32 +14,34 @@ import * as vscode from 'vscode';
 import provideCompletionItems from './provider/provider';
 import { triggerCharacters } from './proto/proto';
 
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
+export async function activate(
+    context: vscode.ExtensionContext
+): Promise<void> {
     initCommand(context);
-	initProvider(context);
+    initProvider(context);
 
-	return Promise.resolve();
+    return Promise.resolve();
 }
 
 export async function deactivate(): Promise<unknown> {
-	// TODO
-	return Promise.resolve();
+    // TODO
+    return Promise.resolve();
 }
 
 async function initCommand(context: vscode.ExtensionContext) {
-	context.subscriptions.push(
-		vscode.commands.registerCommand('codepop.enable', () => {
-			vscode.window.showInformationMessage('codepop.enable');
-		})
-	);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('codepop.enable', () => {
+            vscode.window.showInformationMessage('codepop.enable');
+        })
+    );
 }
 
 async function initProvider(context: vscode.ExtensionContext) {
-	vscode.languages.registerCompletionItemProvider(
-		{ pattern: "**" },
-		{
-			provideCompletionItems,
-		},
-		...triggerCharacters
-	);
+    vscode.languages.registerCompletionItemProvider(
+        { pattern: '**' },
+        {
+            provideCompletionItems,
+        },
+        ...triggerCharacters
+    );
 }

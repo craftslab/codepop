@@ -11,10 +11,10 @@
 // limitations under the License.
 
 import * as child_process from 'child_process';
-import * as vscode from "vscode";
-import { createInterface, ReadLine, ReadLineOptions } from "readline";
+import * as vscode from 'vscode';
+import { createInterface, ReadLine, ReadLineOptions } from 'readline';
 import { Mutex } from 'await-semaphore';
-import { spawn } from "child_process";
+import { spawn } from 'child_process';
 import Binary from '../binary/binary';
 
 type Service = {
@@ -53,7 +53,7 @@ export default class Runtime {
     }
 
     private async runService(): Promise<Service> {
-        const args: string[] = [ "--client=vscode" ];
+        const args: string[] = ['--client=vscode'];
         const cmd = await this.binary.fetch();
 
         return Runtime.runProcess(cmd, args);
@@ -79,14 +79,14 @@ export default class Runtime {
     ): Promise<UnkownWithToString> {
         return new Promise<UnkownWithToString>((resolve, reject) => {
             setTimeout(() => {
-                reject(new Error("Request timeout"));
+                reject(new Error('Request timeout'));
             }, timeout);
 
             this.proc?.stdin?.write(
                 `${JSON.stringify({
                     request,
                 })}\n`,
-                "utf8"
+                'utf8'
             );
         });
     }

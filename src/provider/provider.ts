@@ -11,7 +11,13 @@
 // limitations under the License.
 
 import * as vscode from 'vscode';
-import { brandName, charLimit, completeLabel, defaultDetail, maxNumResults } from "../proto/proto";
+import {
+    brandName,
+    charLimit,
+    completeLabel,
+    defaultDetail,
+    maxNumResults,
+} from '../proto/proto';
 import Requests, { CompleteResult, Result } from '../requests/requests';
 
 const isIncomplete = true;
@@ -50,24 +56,26 @@ async function completionItem(
         after: document.getText(new vscode.Range(position, afterEnd)),
         regionIncludesBeginning: beforeStartOffset === 0,
         regionIncludesEnd: document.offsetAt(afterEnd) !== afterEndOffset,
-        maxNumResults: maxNumResults
+        maxNumResults: maxNumResults,
     });
 
     if (!response || response?.results.length === 0) {
         return [];
     }
 
-    return response.results.slice(0, response.results.length).map((entry, index) =>
-        makeCompletionItem({
-            document,
-            index,
-            position,
-            detailMessage: extractDetailMessage(response),
-            oldPrefix: response.oldPrefix,
-            entry,
-            results: response.results,
-        })
-    );
+    return response.results
+        .slice(0, response.results.length)
+        .map((entry, index) =>
+            makeCompletionItem({
+                document,
+                index,
+                position,
+                detailMessage: extractDetailMessage(response),
+                oldPrefix: response.oldPrefix,
+                entry,
+                results: response.results,
+            })
+        );
 }
 
 function showDetails(
@@ -101,11 +109,15 @@ function makeCompletionItem(args: {
     entry: Result;
     results: Result[];
 }): vscode.CompletionItem {
-    const item = new vscode.CompletionItem(completeLabel + args.entry.newPrefix);
+    const item = new vscode.CompletionItem(
+        completeLabel + args.entry.newPrefix
+    );
 
     item.detail = brandName;
     item.filterText = args.entry.newPrefix;
-    item.insertText = new vscode.SnippetString(escapeTabStopSign(args.entry.newPrefix));
+    item.insertText = new vscode.SnippetString(
+        escapeTabStopSign(args.entry.newPrefix)
+    );
     item.kind = args.entry.kind;
     item.preselect = args.index === 0;
     item.range = new vscode.Range(
@@ -124,9 +136,9 @@ function makeCompletionItem(args: {
 }
 
 function extractDetailMessage(response: CompleteResult) {
-    return (response.userMessage || []).join("\n") || defaultDetail;
+    return (response.userMessage || []).join('\n') || defaultDetail;
 }
 
 function escapeTabStopSign(value: string) {
-    return value.replace(new RegExp("\\$", "g"), "\\$");
+    return value.replace(new RegExp('\\$', 'g'), '\\$');
 }
