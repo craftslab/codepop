@@ -110,7 +110,7 @@
 		"terser-webpack-plugin": "^5.1.4",
 		"tls": "^0.0.1",
 		"ts-loader": "^9.2.3",
-		"vsce": "^1.92.0",
+		"vsce": "^1.95.0",
 		"webpack": "^5.40.0",
 		"webpack-bundle-analyzer": "^4.4.2",
 		"webpack-cli": "^4.7.2"
