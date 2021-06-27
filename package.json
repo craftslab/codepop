@@ -70,12 +70,21 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
+		"analyze:bundle": "webpack --env analyzeBundle",
+		"vscode:prepublish": "yarn --frozen-lockfile && yarn clear-out && webpack --mode production",
+		"compile": "webpack --mode development --watch",
+		"build": "webpack --mode development",
+		"test:copyassets": "ncp ./src/test/fixture ./out/test/fixture/",
+		"prettier": "prettier --write src/",
+		"prettier:check": "prettier --check src/",
+		"lint": "eslint . --max-warnings 0",
+		"lint:fix": "eslint . --fix",
+		"test": "yarn clear-out && tsc && yarn test:copyassets && node ./out/test/runTest.js",
+		"vsce:package": "vsce package",
+		"vsce:publish": "vsce publish",
+		"ovsx:publish": "ovsx publish",
+		"teamcity:test": "tsc && node ./out/test/runTest.js",
+		"clear-out": "rimraf ./out"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
@@ -98,6 +107,10 @@
 		"net": "^1.0.2",
 		"semver": "^7.3.5",
 		"tls": "^0.0.1",
-		"vsce": "^1.92.0"
+		"ts-loader": "^9.2.3",
+		"vsce": "^1.92.0",
+		"webpack": "^5.40.0",
+		"webpack-bundle-analyzer": "^4.4.2",
+		"webpack-cli": "^4.7.2"
 	}
 }
