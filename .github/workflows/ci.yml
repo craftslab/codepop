@@ -43,4 +43,4 @@ jobs:
           yarn install
           yarn add vsce
       - name: Test
-        run: echo "TBD"
+        run: yarn run test

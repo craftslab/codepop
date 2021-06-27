@@ -107,6 +107,7 @@
 		"net": "^1.0.2",
 		"prettier": "^2.3.2",
 		"semver": "^7.3.5",
+		"terser-webpack-plugin": "^5.1.4",
 		"tls": "^0.0.1",
 		"ts-loader": "^9.2.3",
 		"vsce": "^1.92.0",

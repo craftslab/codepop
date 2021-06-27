@@ -1,10 +1,10 @@
-/* eslint-disable import/no-extraneous-dependencies, @typescript-eslint/no-var-requires,  @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/naming-convention */
 // @ts-check
 
 const path = require("path");
 const webpack = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
-const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+const terserPlugin = require("terser-webpack-plugin");
+const { bundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 /* *@type {import('webpack').Configuration} */
 const config = {
@@ -58,13 +58,13 @@ const config = {
         }),
     ],
     optimization: {
-        minimizer: [new TerserPlugin({ extractComments: false })],
+        minimizer: [new terserPlugin({ extractComments: false })],
     },
 };
 
 module.exports = (env) => {
     if (env.analyzeBundle) {
-        config.plugins.push(new BundleAnalyzerPlugin());
+        config.plugins.push(new bundleAnalyzerPlugin());
     }
 
     return [config];
